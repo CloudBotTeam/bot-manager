@@ -5,7 +5,7 @@ import cn.maplewish.botmanager.domain.message.post_event.StringRespMessage;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class QQBot implements BotInterface {
+public class QQBot extends BaseBot {
 
     private URL remote_url;
     private QQBot(String remote) {
@@ -24,5 +24,15 @@ public class QQBot implements BotInterface {
     @Override
     public String getConnetionUrl() {
         return null;
+    }
+
+    @Override
+    public String getBotName() {
+        return null;
+    }
+
+    @Override
+    public boolean checkBotStatus() {
+        return false;
     }
 }
