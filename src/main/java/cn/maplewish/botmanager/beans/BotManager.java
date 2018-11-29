@@ -1,4 +1,6 @@
-package cn.maplewish.botmanager.domain.bot;
+package cn.maplewish.botmanager.beans;
+
+import cn.maplewish.botmanager.domain.bot.BaseBot;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

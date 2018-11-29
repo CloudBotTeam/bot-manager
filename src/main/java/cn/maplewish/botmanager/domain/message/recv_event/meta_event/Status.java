@@ -1,4 +1,4 @@
-package cn.maplewish.botmanager.domain.bot;
+package cn.maplewish.botmanager.domain.message.recv_event.meta_event;
 
 public class Status {
     private Boolean app_initialized;

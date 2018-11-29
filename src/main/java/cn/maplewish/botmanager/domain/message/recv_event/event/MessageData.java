@@ -1,4 +1,4 @@
-package cn.maplewish.botmanager.domain.message.recv_event;
+package cn.maplewish.botmanager.domain.message.recv_event.event;
 
 public class MessageData {
     public String getText() {

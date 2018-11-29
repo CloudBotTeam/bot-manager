@@ -1,4 +1,4 @@
-package cn.maplewish.botmanager.domain.bot;
+package cn.maplewish.botmanager.domain.message.recv_event.meta_event;
 
 /**
  * 机器人的 HEART BEAT, 用于确定机器人的状态

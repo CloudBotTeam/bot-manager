@@ -1,5 +1,5 @@
 package cn.maplewish.botmanager.domain.bot;
 
-abstract class BaseBot implements BotInterface {
+public abstract class BaseBot implements BotInterface {
 
 }
