@@ -11,6 +11,15 @@
 	<name>bot-manager</name>
 	<description>Demo project for Spring Boot</description>
 
+	<!--配置阿里-->
+	<repositories>
+		<repository>
+			<id>alimaven</id>
+			<name>aliyun maven</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -24,32 +33,51 @@
 		<java.version>1.8</java.version>
 	</properties>
 
+
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
+			<version>2.1.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
+			<version>2.1.0.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<version>2.1.0.RELEASE</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-redis</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>cn.maplewish</groupId>
-            <artifactId>bot-manager</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-redis</artifactId>-->
+		<!--</dependency>-->
+
+		<!--<dependency>-->
+			<!--    <groupId>org.springframework.boot</groupId>-->
+			<!--    <artifactId>spring-boot-starter-web</artifactId>-->
+			<!--    <exclusions>-->
+			<!--        <exclusion>-->
+			<!--            <groupId>org.springframework.boot</groupId>-->
+			<!--            <artifactId>spring-boot-starter-logging</artifactId>-->
+			<!--        </exclusion>-->
+			<!--    </exclusions>-->
+		<!--</dependency>-->
+
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-log4j2</artifactId>-->
+		<!--</dependency>-->
+
+
+	</dependencies>
 
 	<build>
 		<plugins>
