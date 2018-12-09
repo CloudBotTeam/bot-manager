@@ -18,7 +18,6 @@ public class OuterController {
     private BotManager botManagerInstance;
 
 
-
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public @ResponseBody Map<String, BaseBot> list_bots() {
         return botManagerInstance.listBot();
@@ -35,7 +34,6 @@ public class OuterController {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         return bot.getConnetionUrl();
     }
-
 
     @ExceptionHandler(RobotNotFound.class)
     public ResponseEntity<Error> robotNotFoundError(RobotNotFound robotNotFound) {

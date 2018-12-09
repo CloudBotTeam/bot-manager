@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 import java.util.Collections;
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ import java.util.logging.Logger;
 //import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class BotManagerApplication {
     private static final Logger logger = Logger.getLogger(BotManagerApplication.class.getName());
 

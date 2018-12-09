@@ -49,8 +49,6 @@ public class EventPostController {
                 BotEvent obj = (BotEvent) event;
                 handle_event(obj);
             };
-//            final BotEvent pojo = mapper.convertValue(payload, BotEvent.class);
-//            handle_event(pojo);
         }
 
         try {
