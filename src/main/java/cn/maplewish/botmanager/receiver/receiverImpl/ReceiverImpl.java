@@ -7,8 +7,8 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 
 @EnableBinding(MessageReceiver.class)
 public class ReceiverImpl {
-    @StreamListener("input")
+    @StreamListener(MessageReceiver.CHANNEL)
     private void handleInput(StringRespMessage respMessage) {
-        System.out.println("收到数据");
+        System.out.println("收到数据: " + respMessage.toString());
     }
 }
