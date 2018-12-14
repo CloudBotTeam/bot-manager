@@ -27,6 +27,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+	<modules>
+		<module>CloudBot-Common</module>
+	</modules>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -81,7 +85,11 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-		</dependency>
+		</dependency><dependency>
+		<groupId>cloudbot.cn</groupId>
+		<artifactId>common-data</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</dependency>
 
 		<!--<dependency>-->
 			<!--<groupId>org.springframework.boot</groupId>-->
