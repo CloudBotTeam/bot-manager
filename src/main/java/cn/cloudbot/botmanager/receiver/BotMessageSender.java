@@ -10,6 +10,6 @@ public interface BotMessageSender {
 
     String OUTPUT_CHANNEL = "BotManagerMessage";
 //    WrappedOutputData 类型的数据被发送
-    @Output("output")
+    @Output(OUTPUT_CHANNEL)
     MessageChannel sendData();
 }

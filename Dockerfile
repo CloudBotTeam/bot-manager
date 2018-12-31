@@ -1,5 +1,7 @@
 FROM maven:3.3.3
 
+ADD CloudBot-Common /tmp/build
+
 ADD pom.xml /tmp/build/
 
 ADD settings.xml /root/.m2/
@@ -16,5 +18,5 @@ RUN cd /tmp/build && mvn -q -DskipTests=true package \
         && cd / && rm -rf /tmp/build
 
 VOLUME /tmp
-EXPOSE 8083
+EXPOSE 8101
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar", "/app.jar"]

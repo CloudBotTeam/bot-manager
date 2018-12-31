@@ -1,5 +1,8 @@
 package cn.cloudbot.botmanager.domain.message.recv_event.event;
-
+/**
+ * 现在建议直接使用 COMMON 中的数据，来处理请求的部分
+ */
+@Deprecated
 public class BotEvent {
     public MessageData[] getMessage() {
         return message;

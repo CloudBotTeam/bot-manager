@@ -1,5 +1,6 @@
 package cn.cloudbot.botmanager.domain.message.recv_event.event;
 
+@Deprecated
 public class MessageData {
     public String getText() {
         return text;

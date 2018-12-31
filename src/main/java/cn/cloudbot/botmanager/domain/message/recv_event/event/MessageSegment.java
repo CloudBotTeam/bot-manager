@@ -1,5 +1,6 @@
 package cn.cloudbot.botmanager.domain.message.recv_event.event;
 
+@Deprecated
 public class MessageSegment {
     public MessageSegment(String type, MessageData data) {
         this.type = type;

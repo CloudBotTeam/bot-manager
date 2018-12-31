@@ -36,4 +36,9 @@ public class QQBot extends BaseBot {
     public Status checkBotStatus() {
         return null;
     }
+
+    @Override
+    protected String getRobot_type() {
+        return "qq";
+    }
 }
