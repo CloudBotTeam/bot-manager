@@ -42,7 +42,7 @@ public abstract class BaseBot implements BotInterface {
     protected Set<Group> group_list = new TreeSet<>();
 
 //    这个估计当成 UID 什么的 来处理了
-    private String robot_name;
+    private String bot_id;
 
     protected abstract String getRobot_type();
 
@@ -81,11 +81,11 @@ public abstract class BaseBot implements BotInterface {
      */
     public abstract void DestroyServiceInContainer();
 
-    public final String getBot_name() {
-        return robot_name;
+    public final String getBot_id() {
+        return bot_id;
     }
 
-    public final void setBot_name(String robot_name) {
-        this.robot_name = robot_name;
+    public final void setBot_id(String robot_name) {
+        this.bot_id = robot_name;
     }
 }

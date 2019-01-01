@@ -9,7 +9,7 @@ interface BotInterface {
     //    获得必要的登录方式：比如扫码链接
     String getConnetionUrl();
 //    获得一个生成的 BOT 的名称
-    String getBot_name();
+    String getBot_id();
 //    确认机器人的状态 -- 状态自己有一个部分缓存？
     BotStatus getBotStatus();
 }

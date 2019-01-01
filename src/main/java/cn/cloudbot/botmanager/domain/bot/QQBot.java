@@ -11,14 +11,13 @@ public class QQBot extends BaseBot {
 
     private Logger logger = Logger.getLogger(QQBot.class.getName());
 
+//    应该是 BOOT 阶段初始化的
     private URL remote_url;
-    QQBot(String remote) {
-        try {
-            this.remote_url = new URL(remote);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+
+    QQBot(String uid) {
+        this.setBot_id(uid);
     }
+
 
     @Override
     public void asyncSendData(StringRespMessage resp) {
@@ -38,11 +37,11 @@ public class QQBot extends BaseBot {
 
     @Override
     public void BootServiceInContainer() {
-        logger.info("启动容器 " + this.getBot_name());
+        logger.info("启动容器 " + this.getBot_id());
     }
 
     @Override
     public void DestroyServiceInContainer() {
-        logger.info("停止容器 " + this.getBot_name());
+        logger.info("停止容器 " + this.getBot_id());
     }
 }
