@@ -1,6 +1,5 @@
 package cn.cloudbot.botmanager.controller;
 
-//import cn.cloudbot.botmanager.domain.message.recv_event.event.BotEvent;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.PayloadCastError;
 import cn.cloudbot.botmanager.receiver.BotMessageSender;
@@ -8,10 +7,10 @@ import cn.cloudbot.common.Message.BotMessage.RobotSendMessage;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -45,8 +44,6 @@ public class EventPostController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public void event(@RequestBody Map<String, Object> payload) {
-
-
 //        extract request ip and match the ip in robot manager
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
@@ -83,13 +80,19 @@ public class EventPostController {
         } catch (RuntimeException e) {
             throw new PayloadCastError(payload, target_class);
         }
-
-
     }
+
+
 
 //    如果消息表示的是信息
     private void handle_event(final RobotSendMessage event) {
-        logger.info("send message: " + event.toString());
+//        logger.info("handle event");
+//        StringBuilder builder = new StringBuilder();
+//        for (RobotSendMessageSegment segment:
+//             event.getData()) {
+//            builder.append(segment.toString());
+//        }
+        logger.info("send message: " + event.toString() + " with detail ");
         sender.sendData().send(MessageBuilder.withPayload(event).build());
     }
 
@@ -100,7 +103,7 @@ public class EventPostController {
 
     @ExceptionHandler(PayloadCastError.class)
     public ResponseEntity<Error> payloadCastError(PayloadCastError error) {
-        logger.info("casted error.");
+        logger.info(new JSONObject(error.getValue_map()).toJSONString());
         return new ResponseEntity<Error>(error.genericError(), HttpStatus.BAD_REQUEST);
     }
 }

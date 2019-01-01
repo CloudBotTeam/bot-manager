@@ -14,4 +14,8 @@ public class PayloadCastError extends RuntimeException {
     public Error genericError() {
         return new Error("value map cannot be cast to class " + target_class.getName());
     }
+
+    public Map<String, Object> getValue_map() {
+        return value_map;
+    }
 }

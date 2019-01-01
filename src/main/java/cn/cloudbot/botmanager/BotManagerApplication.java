@@ -6,9 +6,11 @@ import cn.cloudbot.botmanager.receiver.BotMessageSender;
 import cn.cloudbot.botmanager.receiver.MessageReceiver;
 import com.netflix.discovery.EurekaNamespace;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +24,7 @@ import java.util.logging.Logger;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableBinding(value = {BotMessageSender.class, MessageReceiver.class})
+@EnableAutoConfiguration
 public class BotManagerApplication {
     private static final Logger logger = Logger.getLogger(BotManagerApplication.class.getName());
 
