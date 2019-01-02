@@ -1,15 +1,45 @@
 package cn.cloudbot.botmanager.domain.bot;
 
 import cn.cloudbot.botmanager.domain.bot.group.Group;
+import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.EnumValueException;
 import cn.cloudbot.botmanager.exceptions.RobotNotFound;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
+
 
 public class BotManager {
+    private Logger logger = Logger.getLogger(BotManager.class.getName());
+
     private Map<String, BaseBot> botMap = new ConcurrentHashMap<>();
+    // 机器人的 IP 到机器人 UID 的 map
+    private Map<String, String> ipNameMap = new ConcurrentHashMap<>();
+
+    /**
+     * 生命周期检测
+     * TODO: impl it.
+     */
+    @Scheduled(fixedRate = 5000)
+    private void checkHeartBeatLifeCycle() {
+        logger.info("rate check");
+
+    }
+
+    /**
+     * 碰到heart_beat 处理
+     * @param robot_ip
+     * @param heartBeat
+     */
+    public void handleHeartBeat(String robot_ip, HeartBeat heartBeat) {
+        String robot_name = ipNameMap.get(robot_ip);
+        BaseBot bot = getBotWithException(robot_name);
+        bot.setStatus(BotStatus.RUNNING);
+        bot.saveTimeStamp();
+    }
 
     public void addBot(BaseBot bot) {
         String name = bot.getBot_id();
@@ -64,6 +94,7 @@ public class BotManager {
         Group group = new Group();
         group.setGroup_id("117440534");
         bot.addGroup(group);
+
 
         addBot(bot);
     }

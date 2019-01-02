@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
@@ -25,6 +26,7 @@ import java.util.logging.Logger;
 @EnableDiscoveryClient
 @EnableBinding(value = {BotMessageSender.class, MessageReceiver.class})
 @EnableAutoConfiguration
+@EnableScheduling
 public class BotManagerApplication {
     private static final Logger logger = Logger.getLogger(BotManagerApplication.class.getName());
 

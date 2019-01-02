@@ -1,5 +1,6 @@
 package cn.cloudbot.botmanager.controller;
 
+import cn.cloudbot.botmanager.domain.bot.BotManager;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.PayloadCastError;
 import cn.cloudbot.botmanager.receiver.BotMessageSender;
@@ -32,6 +33,9 @@ public class EventPostController {
 
     @Autowired
     private BotMessageSender sender;
+
+    @Autowired
+    private BotManager botManager;
 
     private static final String HEARTBEAT_FIELD = "meta_event_type";
     private final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
@@ -98,7 +102,10 @@ public class EventPostController {
 
 //    如果发送的消息是心跳包
     private void handle_heartbeat(final HeartBeat heartBeatMessage) {
-        logger.info("handle heart beat");
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+
+        botManager.handleHeartBeat(request.getRemoteAddr(), heartBeatMessage);
     }
 
     @ExceptionHandler(PayloadCastError.class)

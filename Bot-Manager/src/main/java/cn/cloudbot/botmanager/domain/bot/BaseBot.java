@@ -3,6 +3,7 @@ package cn.cloudbot.botmanager.domain.bot;
 
 import cn.cloudbot.botmanager.domain.bot.group.Group;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +15,21 @@ public abstract class BaseBot implements BotInterface {
     public final Collection<Group> getGroup_list() {
         return group_list;
     }
+
+    @JsonIgnore
+    public Long getLastSavedTimeStamp() {
+        return lastSavedTimeStamp;
+    }
+
+    /**
+     * 上一次保存的时间戳
+     */
+    Long lastSavedTimeStamp;
+
+    void saveTimeStamp() {
+        lastSavedTimeStamp = System.currentTimeMillis();
+    }
+
 
     /**
      * return false if duplicate
