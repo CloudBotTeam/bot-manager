@@ -1,24 +1,21 @@
 FROM maven:3.3.3
 
-# 移动有问题！！！
-ADD CloudBot-Common /tmp/build/CloudBot-Common
 # 移动 settings
 ADD settings.xml /root/.m2/
 
-RUN cd /tmp/build/CloudBot-Common && mvn clean install
-
 # 把父项目pom.xml 移动到 /tmp/build
 ADD pom.xml /tmp/build/
+ADD CloudBot-Common/pom.xml /tmp/build/CloudBot-Common/
+ADD Bot-Manager/pom.xml /tmp/build/Bot-Manager/
 
+RUN cd /tmp/build && mvn clean install --projects 'CloudBot-Common'
 
-RUN cd /tmp/build && mvn -q dependency:resolve
-
-ADD src /tmp/build/src
+ADD . /tmp/build
         #构建应用
 
-RUN cd /tmp/build && mvn -q -DskipTests=true package \
+RUN cd /tmp/build && mvn -q -DskipTests=true package -pl 'Bot-Manager' --also-make \
         #拷贝编译结果到指定目录
-        && ls && mv target/*.jar /app.jar \
+        && cd ./Bot-Manager && mv target/*.jar /app.jar \
         #清理编译痕迹
         && cd / && rm -rf /tmp/build
 
