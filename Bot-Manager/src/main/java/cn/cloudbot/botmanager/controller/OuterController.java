@@ -61,7 +61,7 @@ public class OuterController {
 
     @PostMapping(path = "/robots")
     public ResponseEntity<BaseBot> createBot(@RequestBody BotData botData) {
-        BaseBot bot = BotManager.createBot(botData.getBot_type());
+        BaseBot bot = botManagerInstance.createBot(botData.getBot_type());
         if (bot.getGroup_list() != null) {
             for (Group group:
                     bot.getGroup_list()) {
@@ -109,6 +109,8 @@ public class OuterController {
     public ResponseEntity<Error> ValueError(EnumValueException value) {
         return new ResponseEntity<Error>(new Error(String.format("%s not as excepted", value.getValue().toString())), HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+
 }
 
 @Data

@@ -6,7 +6,7 @@ ADD settings.xml /root/.m2/
 # 把父项目pom.xml 移动到 /tmp/build
 ADD pom.xml /tmp/build/
 ADD CloudBot-Common/pom.xml /tmp/build/CloudBot-Common/
-ADD Bot-Manager/pom.xml /tmp/build/Bot-Manager/
+
 
 RUN cd /tmp/build && mvn clean install --projects 'CloudBot-Common'
 

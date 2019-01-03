@@ -28,6 +28,7 @@ interface MsgHandler {
 
 @RestController
 public class EventPostController {
+
     @Autowired
     private Logger logger;
 

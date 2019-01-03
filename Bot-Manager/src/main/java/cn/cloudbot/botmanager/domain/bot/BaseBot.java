@@ -4,6 +4,7 @@ package cn.cloudbot.botmanager.domain.bot;
 import cn.cloudbot.botmanager.domain.bot.group.Group;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,11 @@ public abstract class BaseBot implements BotInterface {
      */
     Long lastSavedTimeStamp;
 
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    protected RestTemplate restTemplate;
     void saveTimeStamp() {
         lastSavedTimeStamp = System.currentTimeMillis();
     }

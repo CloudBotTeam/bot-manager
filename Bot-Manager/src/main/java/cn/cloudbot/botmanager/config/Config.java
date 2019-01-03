@@ -3,6 +3,7 @@ package cn.cloudbot.botmanager.config;
 
 import cn.cloudbot.botmanager.domain.bot.BotManager;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,5 +14,9 @@ public class Config {
         return BotManager.getInstance();
     }
 
-
+//    @Bean
+//    public DockerClient getDocker() throws DockerCertificateException {
+//
+//        return DefaultDockerClient.fromEnv().build();
+//    }
 }

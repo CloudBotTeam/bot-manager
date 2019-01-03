@@ -19,6 +19,6 @@ public class ReceiverImpl {
     @StreamListener(MessageReceiver.CHANNEL)
     private void handleInput(RobotRecvMessage respMessage) {
         logger.info("收到数据: " + respMessage.toString());
-
+        botManager.receiveMessage(respMessage);
     }
 }

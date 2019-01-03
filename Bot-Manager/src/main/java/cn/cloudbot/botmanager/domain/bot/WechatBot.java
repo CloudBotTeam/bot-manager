@@ -2,6 +2,7 @@ package cn.cloudbot.botmanager.domain.bot;
 
 import cn.cloudbot.botmanager.domain.message.post_event.StringRespMessage;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.Status;
+import cn.cloudbot.common.Message.ServiceMessage.RobotRecvMessage;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,7 +36,7 @@ public class WechatBot extends BaseBot {
     }
 
     @Override
-    public void asyncSendData(StringRespMessage resp) {
+    public void asyncSendData(RobotRecvMessage resp) {
 
     }
 

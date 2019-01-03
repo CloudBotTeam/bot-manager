@@ -1,20 +1,21 @@
 package cn.cloudbot.botmanager.domain.bot;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum BotStatus {
-    BOOTING("booting"),  // 启动中
-    NEED_LOGIN("required-login"), // 需要登录
-    RUNNING("running"), // 运行 状况 良好
-    OFFLINE("offline"); // 离线了
+    BOOTING(0),  // 启动中
+    NEED_LOGIN(1), // 需要登录
+    RUNNING(2), // 运行 状况 良好
+    OFFLINE(3); // 离线了
 
-    private String status_name;  // 状态的 名称
+    private Integer status_name;  // 状态的 名称
 
-    BotStatus(String status_name) {
+    BotStatus(Integer status_name) {
         this.status_name = status_name;
     }
 
-
-    @Override
-    public String toString() {
-        return this.status_name;
+    @JsonValue
+    public int toValue() {
+        return ordinal();
     }
 }

@@ -1,10 +1,14 @@
 package cn.cloudbot.botmanager.domain.bot;
 
+import cn.cloudbot.botmanager.domain.bot.group.BootContainer;
 import cn.cloudbot.botmanager.domain.bot.group.Group;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.EnumValueException;
 import cn.cloudbot.botmanager.exceptions.RobotNotFound;
+import cn.cloudbot.common.Message.ServiceMessage.RobotRecvMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -23,11 +27,18 @@ public class BotManager {
      * 生命周期检测
      * TODO: impl it.
      */
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 10000)
     private void checkHeartBeatLifeCycle() {
-        logger.info("rate check");
-
+        logger.info("heart_beat check");
+        for (BaseBot baseBot:
+             botMap.values()) {
+            if (System.currentTimeMillis() - baseBot.lastSavedTimeStamp > 20000) {
+                baseBot.setStatus(BotStatus.OFFLINE);
+            }
+        }
     }
+
+
 
     /**
      * 碰到heart_beat 处理
@@ -88,23 +99,31 @@ public class BotManager {
         if (!botMap.isEmpty()) {
             return;
         }
-        BaseBot bot = createBot("qq");
-        bot.setBot_ip("10.0.0.229");
-        bot.setStatus(BotStatus.RUNNING);
-        Group group = new Group();
-        group.setGroup_id("117440534");
-        bot.addGroup(group);
+        @SuppressWarnings("unchecked")
+        Collection<BootContainer> bootContainers = restTemplate.getForObject("http://10.0.0.229:5123", Collection.class);
+        for (BootContainer boot_container:
+             bootContainers) {
 
-
-        addBot(bot);
+        }
     }
 
+    public void receiveMessage(RobotRecvMessage robotRecvMessage) {
+//        BaseBot bot = this.getBotWithException(robotRecvMessage.getRobot_name());
+        for (BaseBot bot:
+             this.botMap.values()) {
+            bot.asyncSendData(robotRecvMessage);
+        }
+
+    }
+
+    @Autowired
+    private RestTemplate restTemplate;
     /**
      * create boot without id
      * @param bot_type
      * @return
      */
-    public static BaseBot createBot(String bot_type) {
+    public BaseBot createBot(String bot_type) {
         BaseBot create_bot = null;
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         if (bot_type.equals("wechat")) {
@@ -112,11 +131,15 @@ public class BotManager {
         } else if (bot_type.equals("qq")) {
             create_bot = new QQBot(uuid);
         }
+
         if (create_bot == null) {
             throw new EnumValueException(bot_type);
         }
+        create_bot.setRestTemplate(this.restTemplate);
 //      启动服务
         create_bot.BootServiceInContainer();
+
+        this.addBot(create_bot);
         return create_bot;
     }
 
