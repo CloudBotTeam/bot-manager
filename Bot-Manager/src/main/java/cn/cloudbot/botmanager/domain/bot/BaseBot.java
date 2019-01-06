@@ -25,7 +25,7 @@ public abstract class BaseBot implements BotInterface {
     /**
      * 上一次保存的时间戳
      */
-    Long lastSavedTimeStamp;
+    Long lastSavedTimeStamp = new Long(0);
 
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;

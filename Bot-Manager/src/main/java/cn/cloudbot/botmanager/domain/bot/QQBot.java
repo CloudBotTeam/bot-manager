@@ -17,6 +17,11 @@ import java.util.logging.Logger;
 
 public class QQBot extends BaseBot {
 
+    private String DockerApiAddress = "docker-api";
+    private String DockerApiPort = "5000";
+
+    private String DockerHTTPAPI = "http://" + this.DockerApiAddress + ":" + this.DockerApiPort;
+
     private Logger logger = Logger.getLogger(QQBot.class.getName());
 
     private BootContainer bootContainer;
@@ -33,7 +38,9 @@ public class QQBot extends BaseBot {
     public void asyncSendData(RobotRecvMessage resp) {
 //        ResponseEntity<String> response = restTemplate.put(url, entity);
         logger.info(this.getBot_id() + " 发送请求" + resp);
-        restTemplate.postForObject("http://" + bootContainer.getIp() + ":5700", resp, Object.class);
+        String target = "http://" + bootContainer.getIp() + ":5700" + "/send_group_msg";
+        logger.info("请求目标为： " + target);
+        restTemplate.postForObject(target, resp, Object.class);
     }
 
 
@@ -44,7 +51,9 @@ public class QQBot extends BaseBot {
         if (this.getBot_ip() == null) {
             return null;
         }
-        return "http://10.0.0.229:" + bootContainer.getExpose_login_port();
+        // TODO: make it visitable with this
+//        return this.getBot_id() + ":" + bootContainer.getExpose_login_port();
+        return "localhost:" + bootContainer.getExpose_login_port();
     }
 
 
@@ -56,7 +65,7 @@ public class QQBot extends BaseBot {
     @Override
     public void BootServiceInContainer() {
         logger.info("启动容器 " + this.getBot_id());
-        bootContainer = restTemplate.getForObject("http://10.0.0.229:5123/create", BootContainer.class);
+        bootContainer = restTemplate.getForObject(this.DockerHTTPAPI + "/create", BootContainer.class);
         logger.info("获得BOOT CONTAINER " + bootContainer);
         this.setStatus(BotStatus.BOOTING);
         this.setBot_ip(bootContainer.getIp());
@@ -66,6 +75,6 @@ public class QQBot extends BaseBot {
     @Override
     public void DestroyServiceInContainer() {
         logger.info("停止容器 " + this.getBot_id());
-        restTemplate.delete("http://10.0.0.229:5123/delete/" + bootContainer.getContainer_id());
+        restTemplate.delete(this.DockerHTTPAPI + "/delete/" + bootContainer.getContainer_id());
     }
 }

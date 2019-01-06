@@ -20,12 +20,22 @@ public class OuterController {
     private BotManager botManagerInstance;
 
 
+    /**
+     * 使用 BOT MANAGER
+     * lIST 出所有的 bot
+     * @return
+     */
     @RequestMapping(path = "/robots", method = RequestMethod.GET)
     public @ResponseBody
     Collection<BaseBot> list_bots() {
         return botManagerInstance.listBot();
     }
 
+    /**
+     * 使用
+     * @param botName
+     * @return
+     */
     @RequestMapping(path = "/robots/{botName}/status", method = RequestMethod.GET)
     private @ResponseBody
     BotStatus get_status(@PathVariable("botName") String botName) {

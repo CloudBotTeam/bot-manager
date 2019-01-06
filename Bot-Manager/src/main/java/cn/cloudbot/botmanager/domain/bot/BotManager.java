@@ -94,17 +94,20 @@ public class BotManager {
         return _instance;
     }
 
+    /**
+     * todo: make clear how to fix this
+     */
     @PostConstruct
     private synchronized void init() {
         if (!botMap.isEmpty()) {
             return;
         }
-        @SuppressWarnings("unchecked")
-        Collection<BootContainer> bootContainers = restTemplate.getForObject("http://10.0.0.229:5123", Collection.class);
-        for (BootContainer boot_container:
-             bootContainers) {
-
-        }
+//        @SuppressWarnings("unchecked")
+//        Collection<BootContainer> bootContainers = restTemplate.getForObject("http://" + this.DockerApiAddress + ":" + this.DockerApiPort, Collection.class);
+//        for (BootContainer boot_container:
+//             bootContainers) {
+//
+//        }
     }
 
     public void receiveMessage(RobotRecvMessage robotRecvMessage) {
@@ -125,6 +128,7 @@ public class BotManager {
      */
     public BaseBot createBot(String bot_type) {
         BaseBot create_bot = null;
+        // 给BOT 生成唯一的uuid, 成功
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         if (bot_type.equals("wechat")) {
             create_bot = new WechatBot(uuid);
@@ -135,6 +139,7 @@ public class BotManager {
         if (create_bot == null) {
             throw new EnumValueException(bot_type);
         }
+
         create_bot.setRestTemplate(this.restTemplate);
 //      启动服务
         create_bot.BootServiceInContainer();
@@ -144,5 +149,8 @@ public class BotManager {
     }
 
     private BotManager() {}
+
+    private String DockerApiAddress = "docker-api";
+    private String DockerApiPort = "5000";
     
 }
