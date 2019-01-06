@@ -2,7 +2,6 @@
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/QQBot.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/message/recv_event/event/MessageData.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/BotInterface.java
-/Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/ws/WsEvent.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/config/Config.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/receiver/receiverImpl/BotMessageSenderProxy.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/message/receiver_data/WrappedOutputData.java
@@ -15,12 +14,14 @@
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/BotManager.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/receiver/MessageReceiver.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/message/recv_event/event/MessageSegment.java
+/Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/group/Service.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/receiver/BotMessageSender.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/config/beans/WebSocketConfig.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/exceptions/EnumValueException.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/BotManagerApplication.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/message/recv_event/meta_event/Status.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/WechatBot.java
+/Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/exceptions/GroupNotFound.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/BaseBot.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/exceptions/RobotNotFound.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/config/RestTemplateConfig.java

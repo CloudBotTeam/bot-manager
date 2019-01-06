@@ -4,9 +4,13 @@ import cn.cloudbot.botmanager.domain.bot.BotManager;
 import cn.cloudbot.botmanager.domain.bot.BaseBot;
 import cn.cloudbot.botmanager.domain.bot.BotStatus;
 import cn.cloudbot.botmanager.domain.bot.group.Group;
+import cn.cloudbot.botmanager.domain.bot.group.Service;
 import cn.cloudbot.botmanager.exceptions.EnumValueException;
+import cn.cloudbot.botmanager.exceptions.GroupNotFound;
 import cn.cloudbot.botmanager.exceptions.RobotNotFound;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +52,7 @@ public class OuterController {
         return botManagerInstance.getBotWithException(botName);
     }
 
-    @RequestMapping(path = "/{botName}/verify_url", method = RequestMethod.GET)
+    @RequestMapping(path = "/robots/{botName}/verify_url", method = RequestMethod.GET)
     private @ResponseBody String verify(@PathVariable("botName") String botName) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         return bot.getConnetionUrl();
@@ -75,6 +79,8 @@ public class OuterController {
         if (bot.getGroup_list() != null) {
             for (Group group:
                     bot.getGroup_list()) {
+                // set bot_id for group id
+                group.setBot_id(bot.getBot_id());
                 bot.addGroup(group);
             }
         }
@@ -92,16 +98,48 @@ public class OuterController {
     }
 
     @PostMapping(path = "/robots/addgroups")
-    public ResponseEntity addGroups(@RequestBody BatchGroupCommand addGroupCommand) {
-        BaseBot bot = botManagerInstance.getBotWithException(addGroupCommand.getBot_id());
+    public ResponseEntity addGroups(@RequestBody BatchGroupCommand batchGroupCommand) {
+        BaseBot bot = botManagerInstance.getBotWithException(batchGroupCommand.getBot_id());
 
         for (Group group:
-             addGroupCommand.getDelete_groups()) {
+             batchGroupCommand.getAdd_groups()) {
+
             bot.addGroup(group);
         }
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping(path = "/robots/{botName}/groups")
+    private Collection<Group> getRobotsGroups(@PathVariable("botName") String botName) {
+        BaseBot bot = botManagerInstance.getBotWithException(botName);
+        return bot.getGroup_list();
+    }
+
+    @GetMapping(path = "/robots/{botName}/groups/{groupId}")
+    private Group getRobotGroup(@PathVariable("botName") String botName, @PathVariable("groupId") String groupId) {
+        BaseBot bot = botManagerInstance.getBotWithException(botName);
+        return bot.getGroupByIdWithNotFound(groupId);
+    }
+
+    @DeleteMapping(path = "/robots/{botName}/groups/{groupId}/services")
+    private void deleteRobotGroupServices(@PathVariable("botName") String botName,
+                                          @PathVariable("groupId") String groupId,
+                                          @RequestBody ServList servList) {
+        BaseBot bot = botManagerInstance.getBotWithException(botName);
+        Group group = bot.getGroupByIdWithNotFound(groupId);
+        group.getServ_list().removeAll(servList.getServices());
+
+    }
+
+
+    @PostMapping(path = "/robots/{botName}/groups/{groupId}/services")
+    private void addRobotGroupServices(@PathVariable("botName") String botName,
+                                          @PathVariable("groupId") String groupId,
+                                          @RequestBody ServList servList) {
+        BaseBot bot = botManagerInstance.getBotWithException(botName);
+        Group group = bot.getGroupByIdWithNotFound(groupId);
+        group.getServ_list().addAll(servList.getServices());
+    }
 //    @DeleteMapping(path = "/robots")
 //    public ResponseEntity deleteAll() {
 //        BaseBot bot = botManagerInstance.getBotWithException()
@@ -112,7 +150,7 @@ public class OuterController {
     @ExceptionHandler(RobotNotFound.class)
     public ResponseEntity<Error> robotNotFoundError(RobotNotFound robotNotFound) {
         String robot_name = robotNotFound.getRobot_name();
-        return new ResponseEntity<>(new Error(String.format("%s not found", robot_name)), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new Error(String.format("Robot %s not found", robot_name)), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EnumValueException.class)
@@ -120,6 +158,10 @@ public class OuterController {
         return new ResponseEntity<Error>(new Error(String.format("%s not as excepted", value.getValue().toString())), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(GroupNotFound.class)
+    public ResponseEntity<Error> groupNotFoundError(GroupNotFound value) {
+        return new ResponseEntity<Error>(new Error(String.format("Group %s not found", value.getGroup_name())), HttpStatus.NOT_FOUND);
+    }
 
 }
 
@@ -129,15 +171,23 @@ public class OuterController {
 @NoArgsConstructor
 @AllArgsConstructor
 class BatchGroupCommand {
-    private Collection<Group> delete_groups;
+    private Collection<Group> managed_groups;
     private String bot_id;
 
     public Collection<Group> getDelete_groups() {
-        return delete_groups;
+        return managed_groups;
     }
 
     public void setDelete_groups(Collection<Group> delete_groups) {
-        this.delete_groups = delete_groups;
+        this.managed_groups = delete_groups;
+    }
+
+    public Collection<Group> getAdd_groups() {
+        return managed_groups;
+    }
+
+    public void setAdd_groups(Collection<Group> add_groups) {
+        this.managed_groups = add_groups;
     }
 
     public String getBot_id() {
@@ -158,6 +208,8 @@ class BatchGroupCommand {
 class BotData {
 //    private String bot_id;
     private String bot_type; // wechat or qq
+
+    @JsonIgnore
     private Collection<Group> managed_groups;
 
     public String getBot_type() {
@@ -177,4 +229,13 @@ class BotData {
     }
 }
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+class ServList {
+    private Collection<Service> services;
 
+
+}

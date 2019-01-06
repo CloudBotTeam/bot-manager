@@ -3,6 +3,8 @@ package cn.cloudbot.botmanager.domain.bot;
 
 import cn.cloudbot.botmanager.domain.bot.group.Group;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.Status;
+import cn.cloudbot.botmanager.exceptions.GroupNotFound;
+import cn.cloudbot.botmanager.exceptions.RobotNotFound;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,6 +17,16 @@ public abstract class BaseBot implements BotInterface {
     @org.jetbrains.annotations.Contract(pure = true)
     public final Collection<Group> getGroup_list() {
         return group_list;
+    }
+
+    public Group getGroupByIdWithNotFound(String group_id) {
+        for (Group group:
+             group_list) {
+            if (group_id.equals(group.getGroup_id())) {
+                return group;
+            }
+        }
+        throw new GroupNotFound(group_id);
     }
 
     @JsonIgnore
@@ -46,6 +58,7 @@ public abstract class BaseBot implements BotInterface {
         if (group_list.contains(group)) {
             return false;
         } else {
+            group.setBot_id(this.getBot_id());
             group_list.add(group);
             return true;
         }

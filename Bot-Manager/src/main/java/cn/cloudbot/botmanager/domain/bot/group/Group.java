@@ -1,7 +1,12 @@
 package cn.cloudbot.botmanager.domain.bot.group;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +23,11 @@ public class Group implements Comparable<Group> {
     }
 
     private String group_id;
+
+    private Set<Service> serv_list = new TreeSet<>();
+
+    @JsonIgnore
+    private String bot_id;
 
     @Override
     public int compareTo(@NotNull Group o) {
