@@ -19,4 +19,7 @@ public interface BotEntityService extends CrudRepository<BotEntity, Long> {
 //    BotEntity findByContainer_id(String container__id);
 
     Collection<BotEntity> findAll();
+
+    @Override
+    void deleteAll();
 }

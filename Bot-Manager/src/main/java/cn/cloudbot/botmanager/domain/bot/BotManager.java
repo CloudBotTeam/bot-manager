@@ -24,7 +24,7 @@ public class BotManager {
 
     private Map<Long, BaseBot> botMap = new ConcurrentHashMap<>();
     // 机器人的 IP 到机器人 UID 的 map
-    private Map<String, String> ipNameMap = new ConcurrentHashMap<>();
+    private Map<String, Long> ipNameMap = new ConcurrentHashMap<>();
 
     /**
      * 生命周期检测
@@ -49,7 +49,7 @@ public class BotManager {
      * @param heartBeat
      */
     public void handleHeartBeat(String robot_ip, HeartBeat heartBeat) {
-        String robot_name = ipNameMap.get(robot_ip);
+        Long robot_name = ipNameMap.get(robot_ip);
         BaseBot bot = getBotWithException(robot_name);
         bot.setStatus(BotStatus.RUNNING);
         bot.saveTimeStamp();
@@ -60,28 +60,30 @@ public class BotManager {
      * @param bot
      */
     public void addBot(BaseBot bot) {
-        Long name = bot.getBot_id();
-        botMap.put(name, bot);
+//        Long name = bot.getBot_id();
+//        botMap.put(name, bot);
+        BotEntity entity = bot.getEntity();
+        this.botEntityService.save(entity);
     }
 
     /**
      * TODO: connect with database
-     * @param botName
+     * @param bot_id
      * @return
      */
-    public BaseBot getBot(String botName) {
-        return botMap.get(botName);
+    public BaseBot getBot(Long bot_id) {
+        return botMap.get(bot_id);
     }
 
     /**
      * 会抛出运行时异常的
-     * @param botName
+     * @param bot_id
      * @return
      */
-    public BaseBot getBotWithException(String botName) {
-        BaseBot bot = getBot(botName);
+    public BaseBot getBotWithException(Long bot_id) {
+        BaseBot bot = getBot(bot_id);
         if (bot == null) {
-            throw new RobotNotFound(botName);
+            throw new RobotNotFound(bot_id.toString());
         }
         return bot;
     }
@@ -91,8 +93,8 @@ public class BotManager {
      * @param botName
      * @return
      */
-    public boolean removeBot(String botName) {
-        return botMap.remove(botName) == null;
+    public boolean removeBot(Long bot_id) {
+        return botMap.remove(bot_id) == null;
     }
 
     /**
@@ -180,6 +182,10 @@ public class BotManager {
         return create_bot;
     }
 
+    public void deleteAll() {
+        botEntityService.deleteAll();
+    }
+
     public BaseBot createBotWithBotEntity(BotEntity entity) {
         if (entity.getBot_type().equals("qq")) {
             return createQQBotWithBotEntity(entity);
@@ -196,7 +202,7 @@ public class BotManager {
         qqBot.group_list = entity.getGroups();
         qqBot.lastSavedTimeStamp = entity.getLastSaveTime();
         qqBot.setRestTemplate(this.restTemplate);
-
+        qqBot.setEntity(entity);
         return qqBot;
     }
 

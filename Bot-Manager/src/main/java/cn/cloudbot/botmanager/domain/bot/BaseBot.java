@@ -1,6 +1,7 @@
 package cn.cloudbot.botmanager.domain.bot;
 
 
+import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
 import cn.cloudbot.botmanager.domain.bot.group.Group;
 
 import cn.cloudbot.botmanager.exceptions.GroupNotFound;
@@ -18,7 +19,7 @@ public abstract class BaseBot implements BotInterface {
         return group_list;
     }
 
-    public Group getGroupByIdWithNotFound(Long group_id) {
+    public Group getGroupByIdWithNotFound(String group_id) {
         for (Group group:
              group_list) {
             if (group_id.equals(group.getGroup_id())) {
@@ -28,6 +29,14 @@ public abstract class BaseBot implements BotInterface {
         throw new GroupNotFound(group_id.toString());
     }
 
+    protected BotEntity entity;
+    public BotEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(BotEntity entity) {
+        this.entity = entity;
+    }
 
     /**
      * 上一次保存的时间戳

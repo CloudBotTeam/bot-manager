@@ -3,10 +3,13 @@ package cn.cloudbot.botmanager.domain.bot;
 import cn.cloudbot.botmanager.domain.bot.group.BotContainer;
 import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
 import cn.cloudbot.common.Message.ServiceMessage.RobotRecvMessage;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.net.URL;
 import java.util.logging.Logger;
 
+@JsonIgnoreProperties
 public class QQBot extends BaseBot {
 
     private String DockerApiAddress = "docker-api";
@@ -17,7 +20,7 @@ public class QQBot extends BaseBot {
     private Logger logger = Logger.getLogger(QQBot.class.getName());
 
     // db field
-    private BotEntity entity;
+
 
 //    应该是 BOOT 阶段初始化的
     private URL remote_url;
@@ -31,7 +34,7 @@ public class QQBot extends BaseBot {
     @Override
     public void asyncSendData(RobotRecvMessage resp) {
 //        ResponseEntity<String> response = restTemplate.put(url, entity);
-        logger.info(this.getBot_id() + " 发送请求" + resp);
+        logger.info(this.entity.getUuid() + " 发送请求" + resp);
         String target = "http://" + entity.getIp() + ":5700" + "/send_group_msg";
         logger.info("请求目标为： " + target);
         restTemplate.postForObject(target, resp, Object.class);
@@ -42,6 +45,7 @@ public class QQBot extends BaseBot {
 
     @Override
     public String getConnetionUrl() {
+
         if (this.getBot_ip() == null) {
             return null;
         }
@@ -69,11 +73,19 @@ public class QQBot extends BaseBot {
         this.entity.setUuid(this.getBot_id());
         this.entity.setLastSaveTime(System.currentTimeMillis());
 
+        logger.info("boot container: " + bootContainer.toString());
+        logger.info("entity: " + entity.toString());
+
     }
 
     @Override
     public void DestroyServiceInContainer() {
         logger.info("停止容器 " + this.getBot_id());
         restTemplate.delete(this.DockerHTTPAPI + "/delete/" + entity.getContainer_id());
+    }
+
+    @Override
+    public BotEntity getEntity() {
+        return entity;
     }
 }

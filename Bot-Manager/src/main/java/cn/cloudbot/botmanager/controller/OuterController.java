@@ -40,26 +40,26 @@ public class OuterController {
      * @param botName
      * @return
      */
-    @RequestMapping(path = "/robots/{botName}/status", method = RequestMethod.GET)
+    @RequestMapping(path = "/robots/{bot_id}/status", method = RequestMethod.GET)
     private @ResponseBody
-    BotStatus get_status(@PathVariable("botName") String botName) {
-        BaseBot bot = botManagerInstance.getBotWithException(botName);
+    BotStatus get_status(@PathVariable("bot_id") Long bot_id) {
+        BaseBot bot = botManagerInstance.getBotWithException(bot_id);
         return bot.getBotStatus();
     }
 
-    @GetMapping(path = "/robots/{botName}")
-    public @ResponseBody BaseBot getBot(@PathVariable("botName") String botName) {
-        return botManagerInstance.getBotWithException(botName);
+    @GetMapping(path = "/robots/{bot_id}")
+    public @ResponseBody BaseBot getBot(@PathVariable("bot_id") Long bot_id) {
+        return botManagerInstance.getBotWithException(bot_id);
     }
 
-    @RequestMapping(path = "/robots/{botName}/verify_url", method = RequestMethod.GET)
-    private @ResponseBody String verify(@PathVariable("botName") String botName) {
+    @RequestMapping(path = "/robots/{bot_id}/verify_url", method = RequestMethod.GET)
+    private @ResponseBody String verify(@PathVariable("bot_id") Long botName) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         return bot.getConnetionUrl();
     }
 
-    @DeleteMapping(path = "/robots/{botName}")
-    public ResponseEntity deleteBot(@PathVariable("botName") String botName) {
+    @DeleteMapping(path = "/robots/{bot_id}")
+    public ResponseEntity deleteBot(@PathVariable("botName") Long botName) {
         boolean exists = botManagerInstance.removeBot(botName);
 
         HttpStatus status;
@@ -110,20 +110,20 @@ public class OuterController {
     }
 
     @GetMapping(path = "/robots/{botName}/groups")
-    private Collection<Group> getRobotsGroups(@PathVariable("botName") String botName) {
+    private Collection<Group> getRobotsGroups(@PathVariable("botName") Long botName) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         return bot.getGroup_list();
     }
 
     @GetMapping(path = "/robots/{botName}/groups/{groupId}")
-    private Group getRobotGroup(@PathVariable("botName") String botName, @PathVariable("groupId") Long groupId) {
+    private Group getRobotGroup(@PathVariable("botName") Long botName, @PathVariable("groupId") String groupId) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         return bot.getGroupByIdWithNotFound(groupId);
     }
 
     @DeleteMapping(path = "/robots/{botName}/groups/{groupId}/services")
-    private void deleteRobotGroupServices(@PathVariable("botName") String botName,
-                                          @PathVariable("groupId") Long groupId,
+    private void deleteRobotGroupServices(@PathVariable("botName") Long botName,
+                                          @PathVariable("groupId") String groupId,
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
@@ -133,17 +133,18 @@ public class OuterController {
 
 
     @PostMapping(path = "/robots/{botName}/groups/{groupId}/services")
-    private void addRobotGroupServices(@PathVariable("botName") String botName,
-                                          @PathVariable("groupId") Long groupId,
+    private void addRobotGroupServices(@PathVariable("botName") Long botName,
+                                          @PathVariable("groupId") String groupId,
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
         group.getServ_list().addAll(servList.getServices());
     }
-//    @DeleteMapping(path = "/robots")
-//    public ResponseEntity deleteAll() {
-//        BaseBot bot = botManagerInstance.getBotWithException()
-//    }
+
+    @DeleteMapping(path = "/robots")
+    public void deleteAll() {
+        botManagerInstance.deleteAll();
+    }
 
 
 
@@ -172,7 +173,7 @@ public class OuterController {
 @AllArgsConstructor
 class BatchGroupCommand {
     private Collection<Group> managed_groups;
-    private String bot_id;
+    private Long bot_id;
 
     public Collection<Group> getDelete_groups() {
         return managed_groups;
@@ -190,13 +191,7 @@ class BatchGroupCommand {
         this.managed_groups = add_groups;
     }
 
-    public String getBot_id() {
-        return bot_id;
-    }
 
-    public void setBot_id(String bot_id) {
-        this.bot_id = bot_id;
-    }
 }
 
 

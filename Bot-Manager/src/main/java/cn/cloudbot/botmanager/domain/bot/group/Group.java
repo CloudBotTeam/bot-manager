@@ -22,6 +22,7 @@ public class Group implements Comparable<Group> {
     private String group_id;
 
     @Relationship(type = "HAS_SERV", direction = Relationship.UNDIRECTED)
+    @JsonIgnore
     private Set<Service> serv_list = new TreeSet<>();
 
     @JsonIgnore

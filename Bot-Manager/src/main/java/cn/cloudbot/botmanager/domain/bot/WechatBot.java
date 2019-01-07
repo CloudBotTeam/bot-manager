@@ -1,8 +1,10 @@
 package cn.cloudbot.botmanager.domain.bot;
 
+import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
 import cn.cloudbot.botmanager.domain.message.post_event.StringRespMessage;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.Status;
 import cn.cloudbot.common.Message.ServiceMessage.RobotRecvMessage;
+import org.apache.commons.lang.NotImplementedException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +20,11 @@ public class WechatBot extends BaseBot {
 //            e.printStackTrace();
 //        }
         this.setBot_id(uuid);
+    }
+
+    @Override
+    public BotEntity getEntity() {
+        throw new NotImplementedException("un imple");
     }
 
     @Override

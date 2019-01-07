@@ -1,6 +1,7 @@
 package cn.cloudbot.botmanager.domain.bot.group;
 
 import cn.cloudbot.botmanager.domain.bot.BotStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
@@ -35,7 +36,8 @@ public class BotEntity {
 
     private Long lastSaveTime;
 
-//    @Relationship(type = "HAS_GROUPS", direction = Relationship.UNDIRECTED)
+    @Relationship(type = "HAS_GROUPS", direction = Relationship.UNDIRECTED)
+    @JsonIgnore
     private Set<Group> groups = new LinkedHashSet<>();
 
     public static BotEntity fromBotContainer(BotContainer container) {
