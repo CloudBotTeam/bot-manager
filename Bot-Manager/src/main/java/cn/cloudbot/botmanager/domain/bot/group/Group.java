@@ -3,8 +3,10 @@ package cn.cloudbot.botmanager.domain.bot.group;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
+import org.neo4j.ogm.annotation.*;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,21 +15,21 @@ import java.util.TreeSet;
 @Data
 @Getter
 @Setter
+@NodeEntity
 public class Group implements Comparable<Group> {
-    public String getGroup_id() {
-        return group_id;
-    }
 
-    public void setGroup_id(String group_id) {
-        this.group_id = group_id;
-    }
-
+    @Index
     private String group_id;
 
+    @Relationship(type = "HAS_SERV", direction = Relationship.UNDIRECTED)
     private Set<Service> serv_list = new TreeSet<>();
 
     @JsonIgnore
-    private String bot_id;
+    private Long bot_id;
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Override
     public int compareTo(@NotNull Group o) {

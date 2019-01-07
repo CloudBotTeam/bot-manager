@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -27,6 +28,7 @@ import java.util.logging.Logger;
 @EnableBinding(value = {BotMessageSender.class, MessageReceiver.class})
 @EnableAutoConfiguration
 @EnableScheduling
+@EnableNeo4jRepositories
 public class BotManagerApplication {
     private static final Logger logger = Logger.getLogger(BotManagerApplication.class.getName());
 

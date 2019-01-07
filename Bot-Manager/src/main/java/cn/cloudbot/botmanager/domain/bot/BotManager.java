@@ -1,11 +1,12 @@
 package cn.cloudbot.botmanager.domain.bot;
 
-import cn.cloudbot.botmanager.domain.bot.group.BootContainer;
-import cn.cloudbot.botmanager.domain.bot.group.Group;
+import cn.cloudbot.botmanager.dao.BotEntityService;
+import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.EnumValueException;
 import cn.cloudbot.botmanager.exceptions.RobotNotFound;
 import cn.cloudbot.common.Message.ServiceMessage.RobotRecvMessage;
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
@@ -14,12 +15,14 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class BotManager {
     private Logger logger = Logger.getLogger(BotManager.class.getName());
 
-    private Map<String, BaseBot> botMap = new ConcurrentHashMap<>();
+    private Map<Long, BaseBot> botMap = new ConcurrentHashMap<>();
     // 机器人的 IP 到机器人 UID 的 map
     private Map<String, String> ipNameMap = new ConcurrentHashMap<>();
 
@@ -52,11 +55,20 @@ public class BotManager {
         bot.saveTimeStamp();
     }
 
+    /**
+     * TODO: connect with database
+     * @param bot
+     */
     public void addBot(BaseBot bot) {
-        String name = bot.getBot_id();
+        Long name = bot.getBot_id();
         botMap.put(name, bot);
     }
 
+    /**
+     * TODO: connect with database
+     * @param botName
+     * @return
+     */
     public BaseBot getBot(String botName) {
         return botMap.get(botName);
     }
@@ -74,17 +86,32 @@ public class BotManager {
         return bot;
     }
 
+    /**
+     * TODO: connect with database
+     * @param botName
+     * @return
+     */
     public boolean removeBot(String botName) {
         return botMap.remove(botName) == null;
     }
 
+    /**
+     * TODO: connect with database
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public Collection<BaseBot> listBot() {
-        return new HashMap<>(botMap).values();
+//        return new HashMap<>(botMap).values();
+        Stream<BaseBot> baseBotStream = botEntityService.findAll().stream().map(this::createBotWithBotEntity);
+        return baseBotStream.collect(Collectors.toList());
     }
 
     private static BotManager _instance;
 
+    /**
+     * TODO: create singleton bean.
+     * @return
+     */
     public static BotManager getInstance() {
         synchronized (BotManager.class) {
             if (_instance == null) {
@@ -121,6 +148,10 @@ public class BotManager {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private BotEntityService botEntityService;
+
     /**
      * create boot without id
      * @param bot_type
@@ -129,7 +160,7 @@ public class BotManager {
     public BaseBot createBot(String bot_type) {
         BaseBot create_bot = null;
         // 给BOT 生成唯一的uuid, 成功
-        final String uuid = UUID.randomUUID().toString().replace("-", "");
+        final Long uuid = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         if (bot_type.equals("wechat")) {
             create_bot = new WechatBot(uuid);
         } else if (bot_type.equals("qq")) {
@@ -144,8 +175,33 @@ public class BotManager {
 //      启动服务
         create_bot.BootServiceInContainer();
 
+        // TODO: db lize
         this.addBot(create_bot);
         return create_bot;
+    }
+
+    public BaseBot createBotWithBotEntity(BotEntity entity) {
+        if (entity.getBot_type().equals("qq")) {
+            return createQQBotWithBotEntity(entity);
+        } else if (entity.getBot_type().equals("wechat")) {
+            return createWechatBotWithBotEntity(entity);
+        }
+        throw new EnumValueException(entity.getBot_type());
+    }
+
+    private QQBot createQQBotWithBotEntity(BotEntity entity) {
+        QQBot qqBot = new QQBot(entity.getUuid());
+        qqBot.setStatus(entity.getBotStatus());
+        qqBot.setBot_ip(entity.getIp());
+        qqBot.group_list = entity.getGroups();
+        qqBot.lastSavedTimeStamp = entity.getLastSaveTime();
+        qqBot.setRestTemplate(this.restTemplate);
+
+        return qqBot;
+    }
+
+    private WechatBot createWechatBotWithBotEntity(BotEntity entity) {
+        throw new NotImplementedException("Un impl");
     }
 
     private BotManager() {}

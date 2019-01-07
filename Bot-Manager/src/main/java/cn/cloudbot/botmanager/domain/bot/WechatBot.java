@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public class WechatBot extends BaseBot {
     private Logger logger = Logger.getLogger(WechatBot.class.getName());
     private URL remote_url;
-    public WechatBot(String uuid) {
+    public WechatBot(Long uuid) {
 //        try {
 //            this.remote_url = new URL(url);
 //        } catch (MalformedURLException e) {

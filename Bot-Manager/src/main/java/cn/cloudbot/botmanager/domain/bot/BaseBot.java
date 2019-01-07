@@ -2,13 +2,12 @@ package cn.cloudbot.botmanager.domain.bot;
 
 
 import cn.cloudbot.botmanager.domain.bot.group.Group;
-import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.Status;
+
 import cn.cloudbot.botmanager.exceptions.GroupNotFound;
-import cn.cloudbot.botmanager.exceptions.RobotNotFound;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.neo4j.ogm.annotation.Transient;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,31 +18,32 @@ public abstract class BaseBot implements BotInterface {
         return group_list;
     }
 
-    public Group getGroupByIdWithNotFound(String group_id) {
+    public Group getGroupByIdWithNotFound(Long group_id) {
         for (Group group:
              group_list) {
             if (group_id.equals(group.getGroup_id())) {
                 return group;
             }
         }
-        throw new GroupNotFound(group_id);
+        throw new GroupNotFound(group_id.toString());
     }
 
-    @JsonIgnore
-    public Long getLastSavedTimeStamp() {
-        return lastSavedTimeStamp;
-    }
 
     /**
      * 上一次保存的时间戳
      */
+    @Transient
+    @JsonIgnore
     Long lastSavedTimeStamp = new Long(0);
 
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
+    @Transient
+    @JsonIgnore
     protected RestTemplate restTemplate;
+
     void saveTimeStamp() {
         lastSavedTimeStamp = System.currentTimeMillis();
     }
@@ -77,7 +77,7 @@ public abstract class BaseBot implements BotInterface {
     protected Set<Group> group_list = new TreeSet<>();
 
 //    这个估计当成 UID 什么的 来处理了
-    private String bot_id;
+    private Long bot_id;
 
     protected abstract String getRobot_type();
 
@@ -116,11 +116,11 @@ public abstract class BaseBot implements BotInterface {
      */
     public abstract void DestroyServiceInContainer();
 
-    public final String getBot_id() {
+    public final Long getBot_id() {
         return bot_id;
     }
 
-    public final void setBot_id(String robot_name) {
-        this.bot_id = robot_name;
+    public final void setBot_id(Long bot_id) {
+        this.bot_id = bot_id;
     }
 }

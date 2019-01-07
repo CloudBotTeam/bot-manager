@@ -116,14 +116,14 @@ public class OuterController {
     }
 
     @GetMapping(path = "/robots/{botName}/groups/{groupId}")
-    private Group getRobotGroup(@PathVariable("botName") String botName, @PathVariable("groupId") String groupId) {
+    private Group getRobotGroup(@PathVariable("botName") String botName, @PathVariable("groupId") Long groupId) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         return bot.getGroupByIdWithNotFound(groupId);
     }
 
     @DeleteMapping(path = "/robots/{botName}/groups/{groupId}/services")
     private void deleteRobotGroupServices(@PathVariable("botName") String botName,
-                                          @PathVariable("groupId") String groupId,
+                                          @PathVariable("groupId") Long groupId,
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
@@ -134,7 +134,7 @@ public class OuterController {
 
     @PostMapping(path = "/robots/{botName}/groups/{groupId}/services")
     private void addRobotGroupServices(@PathVariable("botName") String botName,
-                                          @PathVariable("groupId") String groupId,
+                                          @PathVariable("groupId") Long groupId,
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
