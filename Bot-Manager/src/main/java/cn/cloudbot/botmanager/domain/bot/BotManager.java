@@ -22,21 +22,22 @@ import java.util.stream.Stream;
 public class BotManager {
     private Logger logger = Logger.getLogger(BotManager.class.getName());
 
-    private Map<Long, BaseBot> botMap = new ConcurrentHashMap<>();
+//    private Map<Long, BaseBot> botMap = new ConcurrentHashMap<>();
     // 机器人的 IP 到机器人 UID 的 map
     private Map<String, Long> ipNameMap = new ConcurrentHashMap<>();
 
     /**
      * 生命周期检测
-     * TODO: impl it.
+     *
      */
     @Scheduled(fixedRate = 10000)
     private void checkHeartBeatLifeCycle() {
         logger.info("heart_beat check");
         for (BaseBot baseBot:
-             botMap.values()) {
+             listBot()) {
             if (System.currentTimeMillis() - baseBot.lastSavedTimeStamp > 20000) {
                 baseBot.setStatus(BotStatus.OFFLINE);
+                botEntityService.save(baseBot.getEntity());
             }
         }
     }
@@ -56,7 +57,7 @@ public class BotManager {
     }
 
     /**
-     * TODO: connect with database
+     *
      * @param bot
      */
     public void addBot(BaseBot bot) {
@@ -66,26 +67,21 @@ public class BotManager {
         this.botEntityService.save(entity);
     }
 
-    /**
-     * TODO: connect with database
-     * @param bot_id
-     * @return
-     */
-    public BaseBot getBot(Long bot_id) {
-        return botMap.get(bot_id);
-    }
 
     /**
+     *
      * 会抛出运行时异常的
      * @param bot_id
      * @return
      */
     public BaseBot getBotWithException(Long bot_id) {
-        BaseBot bot = getBot(bot_id);
-        if (bot == null) {
+//        BaseBot bot = getBot(bot_id);
+        Optional<BotEntity> botEntity = this.botEntityService.findById(bot_id);
+
+        if (!botEntity.isPresent()) {
             throw new RobotNotFound(bot_id.toString());
         }
-        return bot;
+        return this.createBotWithBotEntity(botEntity.get());
     }
 
     /**
@@ -94,11 +90,15 @@ public class BotManager {
      * @return
      */
     public boolean removeBot(Long bot_id) {
-        return botMap.remove(bot_id) == null;
+        BaseBot bot = getBotWithException(bot_id);
+        restTemplate.delete("http://" + DockerApiAddress + ":" + DockerApiPort + "/delete/" + bot.entity.getContainer_id());
+        this.botEntityService.deleteById(bot_id);
+
+        return bot != null;
     }
 
     /**
-     * TODO: connect with database
+     *
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -128,9 +128,9 @@ public class BotManager {
      */
     @PostConstruct
     private synchronized void init() {
-        if (!botMap.isEmpty()) {
-            return;
-        }
+//        if (!botMap.isEmpty()) {
+//            return;
+//        }
 //        @SuppressWarnings("unchecked")
 //        Collection<BootContainer> bootContainers = restTemplate.getForObject("http://" + this.DockerApiAddress + ":" + this.DockerApiPort, Collection.class);
 //        for (BootContainer boot_container:
@@ -142,7 +142,7 @@ public class BotManager {
     public void receiveMessage(RobotRecvMessage robotRecvMessage) {
 //        BaseBot bot = this.getBotWithException(robotRecvMessage.getRobot_name());
         for (BaseBot bot:
-             this.botMap.values()) {
+             listBot()) {
             bot.asyncSendData(robotRecvMessage);
         }
 

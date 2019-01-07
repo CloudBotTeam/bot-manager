@@ -59,7 +59,7 @@ public class OuterController {
     }
 
     @DeleteMapping(path = "/robots/{bot_id}")
-    public ResponseEntity deleteBot(@PathVariable("botName") Long botName) {
+    public ResponseEntity deleteBot(@PathVariable("bot_id") Long botName) {
         boolean exists = botManagerInstance.removeBot(botName);
 
         HttpStatus status;

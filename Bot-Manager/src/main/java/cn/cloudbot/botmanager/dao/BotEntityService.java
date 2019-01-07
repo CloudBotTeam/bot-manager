@@ -14,12 +14,18 @@ public interface BotEntityService extends CrudRepository<BotEntity, Long> {
     @Override
     <S extends BotEntity> S save(S entity);
 
-    Optional<BotEntity> findByUuid(Long aLong);
+//    Optional<BotEntity> findByUuid(Long aLong);
 
-//    BotEntity findByContainer_id(String container__id);
+    @Override
+    Optional<BotEntity> findById(Long aLong);
+
+    //    BotEntity findByContainer_id(String container__id);
 
     Collection<BotEntity> findAll();
 
     @Override
     void deleteAll();
+
+    @Override
+    void deleteById(Long aLong);
 }
