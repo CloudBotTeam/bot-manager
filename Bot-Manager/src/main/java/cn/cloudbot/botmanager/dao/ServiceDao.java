@@ -13,4 +13,7 @@ public interface ServiceDao extends CrudRepository<Service, Long>{
     <S extends Service> Iterable<S> saveAll(Iterable<S> entities);
 
     Optional<Service> findByServ(String servName);
+
+    @Override
+    Iterable<Service> findAll();
 }

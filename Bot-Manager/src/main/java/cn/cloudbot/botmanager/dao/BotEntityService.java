@@ -1,6 +1,7 @@
 package cn.cloudbot.botmanager.dao;
 
 import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
+import cn.cloudbot.botmanager.domain.bot.group.Group;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -31,4 +32,7 @@ public interface BotEntityService extends CrudRepository<BotEntity, Long> {
     void deleteById(Long aLong);
 
     Optional<BotEntity> findByIp(String ip);
+
+
+    Iterable<BotEntity> findAllByGroupsContains(Group group);
 }

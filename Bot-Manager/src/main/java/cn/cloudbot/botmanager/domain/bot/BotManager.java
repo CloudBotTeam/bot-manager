@@ -1,11 +1,17 @@
 package cn.cloudbot.botmanager.domain.bot;
 
 import cn.cloudbot.botmanager.dao.BotEntityService;
+import cn.cloudbot.botmanager.dao.GroupService;
+import cn.cloudbot.botmanager.dao.ServiceDao;
+import cn.cloudbot.botmanager.dao.ServicerService;
 import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
+import cn.cloudbot.botmanager.domain.bot.group.Group;
+import cn.cloudbot.botmanager.domain.bot.group.Service;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.EnumValueException;
 import cn.cloudbot.botmanager.exceptions.RobotNotFound;
 import cn.cloudbot.common.Message.ServiceMessage.RobotRecvMessage;
+import cn.cloudbot.common.Message2.RobotRecvMessage2;
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,7 +36,7 @@ public class BotManager {
      * 生命周期检测
      *
      */
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 20000)
     private void checkHeartBeatLifeCycle() {
         logger.info("heart_beat check");
         for (BaseBot baseBot:
@@ -150,8 +156,48 @@ public class BotManager {
 //        }
     }
 
+    @Autowired
+    private ServicerService serviceDao;
+
+    public void receiveMessage2(RobotRecvMessage2 robotRecvMessage2) {
+        switch (robotRecvMessage2.getType()) {
+            case "all":
+                logger.info("all message");
+
+                String serv_name = robotRecvMessage2.getFrom_service();
+                Service service = serviceDao.findServ(serv_name);
+                for ( Group group :groupService.findAllByServListContains(service)) {
+                    for (BotEntity bot:
+                         botEntityService.findAllByGroupsContains(group)) {
+                        RobotRecvMessage message = new RobotRecvMessage();
+                        message.setMessage(robotRecvMessage2.getMessage());
+                        message.setGroup_id(group.getGroup());
+                        message.setRoom_id(group.getGroup());
+                        BaseBot bot1 = createBotWithBotEntity(bot);
+                        bot1.asyncSendData(message);
+                    }
+                }
+                break;
+            case "return":
+                logger.info("return message from received " + robotRecvMessage2);
+                RobotRecvMessage message = new RobotRecvMessage();
+                message.setMessage(robotRecvMessage2.getMessage());
+                message.setGroup_id(robotRecvMessage2.getGroup_id());
+                message.setRoom_id(message.getGroup_id());
+                Optional<BotEntity> botEntityOptional = botEntityService.findByIp(robotRecvMessage2.getRobot_ip());
+                if (!botEntityOptional.isPresent()) {
+                    return;
+                }
+                BotEntity botEntity = botEntityOptional.get();
+                BaseBot bot = createBotWithBotEntity(botEntity);
+                bot.asyncSendData(message);
+
+        }
+    }
+
     public void receiveMessage(RobotRecvMessage robotRecvMessage) {
 //        BaseBot bot = this.getBotWithException(robotRecvMessage.getRobot_name());
+
         for (BaseBot bot:
              listBot()) {
             bot.asyncSendData(robotRecvMessage);
@@ -165,6 +211,8 @@ public class BotManager {
     @Autowired
     private BotEntityService botEntityService;
 
+    @Autowired
+    private GroupService groupService;
     /**
      * create boot without id
      * @param bot_type

@@ -1,6 +1,7 @@
 package cn.cloudbot.botmanager.dao;
 
 import cn.cloudbot.botmanager.domain.bot.group.Group;
+import cn.cloudbot.botmanager.domain.bot.group.Service;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,5 +20,11 @@ public interface GroupService extends CrudRepository<Group, Long> {
 
     Optional<Group> findByGroup(String group);
 
-    Optional<Group> findByBotId(Long botId);
+    Iterable<Group> findAllByBotId(Long botId);
+
+
+    @Override
+    Iterable<Group> findAll();
+
+    Iterable<Group> findAllByServListContains(Service group);
 }

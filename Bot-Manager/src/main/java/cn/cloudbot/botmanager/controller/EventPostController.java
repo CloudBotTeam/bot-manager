@@ -1,11 +1,18 @@
 package cn.cloudbot.botmanager.controller;
 
 import cn.cloudbot.botmanager.dao.BotEntityService;
+import cn.cloudbot.botmanager.dao.GroupService;
 import cn.cloudbot.botmanager.domain.bot.BotManager;
+import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
+import cn.cloudbot.botmanager.domain.bot.group.Group;
+import cn.cloudbot.botmanager.domain.bot.group.Service;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.PayloadCastError;
 import cn.cloudbot.botmanager.receiver.BotMessageSender;
+import cn.cloudbot.botmanager.receiver2.BotMessageSender2;
 import cn.cloudbot.common.Message.BotMessage.RobotSendMessage;
+import cn.cloudbot.common.Message2.RobotRecvMessage2;
+import cn.cloudbot.common.Message2.RobotSendMessage2;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,9 +26,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 interface MsgHandler {
     void handle_msg(final Object value);
@@ -36,8 +44,8 @@ public class EventPostController {
     @Autowired
     private Logger logger;
 
-    @Autowired
-    private BotMessageSender sender;
+//    @Autowired
+//    private BotMessageSender sender;
 
     @Autowired
     private BotManager botManager;
@@ -91,7 +99,14 @@ public class EventPostController {
         }
     }
 
+    @Autowired
+    private BotMessageSender2 sender2;
 
+//    @Autowired
+//    private BotEntityService botEntityService;
+
+    @Autowired
+    private GroupService groupService;
 
 //    如果消息表示的是信息
     private void handle_event(final RobotSendMessage event, final String from_ip) {
@@ -103,7 +118,32 @@ public class EventPostController {
 //        }
         logger.info("send message: " + event.toString() + " with detail ");
 
-        sender.sendData().send(MessageBuilder.withPayload(event).build());
+        RobotSendMessage2 message2 = new RobotSendMessage2();
+        message2.setRobotSendMessage(event);
+        message2.setRobotIp(from_ip);
+        Optional<BotEntity> botEntityOptional = botEntityService.findByIp(from_ip);
+        if (!botEntityOptional.isPresent()) {
+            logger.info("bot entity with ip " + from_ip + " un exists");
+            return;
+        }
+
+        for (Group g: botEntityOptional.get().getGroups()) {
+            logger.info("compare " + g.getGroup() + " with " + event.getGroup_id());
+            if(g.getGroup().equals(event.getGroup_id())) {
+
+                Collection<String> serv = new HashSet<>();
+                Optional<Group> groupOptional = groupService.findByGroup(g.getGroup());
+                Group group = groupOptional.get();
+                for (Service s:
+                     group.getServList()) {
+                    serv.add(s.getServ_name());
+                }
+                message2.setServices(serv);
+                logger.info("send " + message2);
+                sender2.sendData().send(MessageBuilder.withPayload(message2).build());
+            }
+        }
+
     }
 
 //    如果发送的消息是心跳包

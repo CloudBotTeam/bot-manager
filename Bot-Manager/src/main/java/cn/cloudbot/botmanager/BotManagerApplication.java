@@ -4,6 +4,7 @@ package cn.cloudbot.botmanager;
 //import org.slf4j.Logger;
 import cn.cloudbot.botmanager.receiver.BotMessageSender;
 import cn.cloudbot.botmanager.receiver.MessageReceiver;
+import cn.cloudbot.botmanager.receiver2.BotMessageSender2;
 import com.netflix.discovery.EurekaNamespace;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableBinding(value = {BotMessageSender.class, MessageReceiver.class})
+@EnableBinding(value = {BotMessageSender.class, MessageReceiver.class, BotMessageSender2.class})
 @EnableAutoConfiguration
 @EnableScheduling
 @EnableNeo4jRepositories

@@ -21,8 +21,12 @@ public class Group implements Comparable<Group> {
     @Index
     private String group;
 
+//    @Relationship(type = "HAS_SERV", direction = Relationship.UNDIRECTED)
+//    private Set<Service> servList = new TreeSet<>();
+
     @Relationship(type = "HAS_SERV", direction = Relationship.UNDIRECTED)
-    private Set<Service> serv_list = new TreeSet<>();
+    private Set<Service> servList = new LinkedHashSet<>();
+
 
     @JsonIgnore
     private Long botId;

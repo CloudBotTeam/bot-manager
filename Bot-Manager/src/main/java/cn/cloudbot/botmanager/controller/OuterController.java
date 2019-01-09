@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 @CrossOrigin
 @RestController
@@ -163,28 +164,66 @@ public class OuterController {
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
-        group.getServ_list().removeAll(servList.getServices());
-
+        group.getServList().removeAll(servList.getServices());
+        groupService.save(group);
     }
 
     @Autowired
     private ServicerService servicerService;
 
+
+    private Logger logger = Logger.getLogger(OuterController.class.getName());
+
     @PostMapping(path = "/robots/{botName}/groups/{groupId}/services")
-    private void addRobotGroupServices(@PathVariable("botName") Long botName,
+    private Group addRobotGroupServices(@PathVariable("botName") Long botName,
                                           @PathVariable("groupId") String groupId,
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
         Collection<Service> services = new ArrayList<>();
+
         for (Service service:
              servList.getServices()) {
             String name = service.getServ();
-
+            logger.info("ServName " + name + " want to add in our service");
             services.add(servicerService.findServ(name));
         }
-        group.getServ_list().addAll(services);
+        group.getServList().addAll(services);
         groupService.save(group);
+        return group;
+    }
+
+    @PostMapping(path = "/robots/{bot_id}/groups/{group}/services/{service_id}")
+    private void addService(@PathVariable("bot_id") Long botName,
+                            @PathVariable("group") String groupId,
+                            @PathVariable("service_id") String service_id) {
+        BaseBot bot = botManagerInstance.getBotWithException(botName);
+        Group group = bot.getGroupByIdWithNotFound(groupId);
+
+        Service service = servicerService.findServ(service_id);
+        group.getServList().add(service);
+        groupService.save(group);
+
+    }
+
+    @GetMapping(path = "/services")
+    private Collection<Service> showServices() {
+        Collection<Service> services = new ArrayList<>();
+        for (Service service:
+             servicerService.listAll()) {
+            services.add(service);
+        }
+        return services;
+    }
+
+    @GetMapping(path = "/groups")
+    private Collection<Group> showGroups() {
+        Collection<Group> groupCollection = new ArrayList<>();
+        for (Group service:
+                groupService.findAll()) {
+            groupCollection.add(service);
+        }
+        return groupCollection;
     }
 
     @DeleteMapping(path = "/robots")
