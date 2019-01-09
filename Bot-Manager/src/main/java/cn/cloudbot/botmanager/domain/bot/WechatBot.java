@@ -77,9 +77,15 @@ public class WechatBot extends BaseBot {
 
     @Override
     public String getConnetionUrl() {
-        String target = "http://" + entity.getIp() + ":5700" + "/connectUrl";
-        String connectUrl = restTemplate.getForObject(target , String.class);
-        return connectUrl;
+        try {
+            String target = "http://" + entity.getIp() + ":5700" + "/connectUrl";
+            String connectUrl = restTemplate.getForObject(target , String.class);
+            return connectUrl;
+        } catch (RuntimeException e) {
+            return "";
+        }
+
+
     }
 
 
