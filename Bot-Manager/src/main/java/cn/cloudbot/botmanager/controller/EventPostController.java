@@ -1,5 +1,6 @@
 package cn.cloudbot.botmanager.controller;
 
+import cn.cloudbot.botmanager.dao.BotEntityService;
 import cn.cloudbot.botmanager.domain.bot.BotManager;
 import cn.cloudbot.botmanager.domain.message.recv_event.meta_event.HeartBeat;
 import cn.cloudbot.botmanager.exceptions.PayloadCastError;
@@ -28,6 +29,8 @@ interface MsgHandler {
 
 @RestController
 public class EventPostController {
+    @Autowired
+    private BotEntityService botEntityService;
 
     @Autowired
     private Logger logger;
@@ -72,7 +75,7 @@ public class EventPostController {
 
             msgHandler = (final Object event) -> {
                 RobotSendMessage obj = (RobotSendMessage) event;
-                handle_event(obj);
+                handle_event(obj, ip);
 
             };
         }
@@ -90,7 +93,7 @@ public class EventPostController {
 
 
 //    如果消息表示的是信息
-    private void handle_event(final RobotSendMessage event) {
+    private void handle_event(final RobotSendMessage event, final String from_ip) {
 //        logger.info("handle event");
 //        StringBuilder builder = new StringBuilder();
 //        for (RobotSendMessageSegment segment:
@@ -98,6 +101,7 @@ public class EventPostController {
 //            builder.append(segment.toString());
 //        }
         logger.info("send message: " + event.toString() + " with detail ");
+
         sender.sendData().send(MessageBuilder.withPayload(event).build());
     }
 

@@ -19,25 +19,25 @@ import java.util.TreeSet;
 public class Group implements Comparable<Group> {
 
     @Index
-    private String group_id;
+    private String group;
 
     @Relationship(type = "HAS_SERV", direction = Relationship.UNDIRECTED)
-    @JsonIgnore
     private Set<Service> serv_list = new TreeSet<>();
 
     @JsonIgnore
-    private Long bot_id;
+    private Long botId;
 
     @Id
     @GeneratedValue
+    @JsonIgnore
     private Long id;
 
     @Override
     public int compareTo(@NotNull Group o) {
-        if (o.group_id == null || this.group_id == null) {
+        if (o.group == null || this.group == null) {
             throw new RuntimeException("Group " + o + " or " + this + " has no group_id");
         }
 
-        return this.group_id.compareTo(o.group_id);
+        return this.group.compareTo(o.group);
     }
 }

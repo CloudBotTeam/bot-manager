@@ -3,9 +3,11 @@ package cn.cloudbot.botmanager.domain.bot.group;
 import cn.cloudbot.botmanager.domain.bot.BotStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.springframework.data.annotation.Id;
+import org.springframework.stereotype.Indexed;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -18,7 +20,9 @@ import java.util.Set;
 @AllArgsConstructor
 public class BotEntity {
     // 存储的 IP
+    @Index
     private String ip;
+
     private String expose_login_port;
     // container 的id
 

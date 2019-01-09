@@ -22,7 +22,7 @@ public abstract class BaseBot implements BotInterface {
     public Group getGroupByIdWithNotFound(String group_id) {
         for (Group group:
              group_list) {
-            if (group_id.equals(group.getGroup_id())) {
+            if (group_id.equals(group.getGroup())) {
                 return group;
             }
         }
@@ -67,7 +67,7 @@ public abstract class BaseBot implements BotInterface {
         if (group_list.contains(group)) {
             return false;
         } else {
-            group.setBot_id(this.getBot_id());
+            group.setBotId(this.getBot_id());
             group_list.add(group);
             return true;
         }

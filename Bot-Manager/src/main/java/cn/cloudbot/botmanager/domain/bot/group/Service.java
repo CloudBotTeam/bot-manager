@@ -18,10 +18,10 @@ public class Service implements Comparable<Service>{
      * serv 的名称
      */
     @Index(unique=true)
-    private String serv_id;
+    private String serv;
 
     public String getServ_name() {
-        return serv_id;
+        return serv;
     }
 
     @Id
@@ -31,6 +31,6 @@ public class Service implements Comparable<Service>{
 
     @Override
     public int compareTo(@NotNull Service o) {
-        return this.serv_id.compareTo(o.serv_id);
+        return this.serv.compareTo(o.serv);
     }
 }

@@ -35,10 +35,20 @@ public class BotManager {
         logger.info("heart_beat check");
         for (BaseBot baseBot:
              listBot()) {
-            if (System.currentTimeMillis() - baseBot.lastSavedTimeStamp > 20000) {
-                baseBot.setStatus(BotStatus.OFFLINE);
-                botEntityService.save(baseBot.getEntity());
+            switch (baseBot.getBotStatus()) {
+                case BOOTING:
+                    baseBot.saveTimeStamp();
+                    botEntityService.save(baseBot.getEntity());
+                case RUNNING:
+                    if (System.currentTimeMillis() - baseBot.lastSavedTimeStamp > 50000) {
+                        logger.info(baseBot.getBot_id() + " was offline in heartbeat check.");
+                        baseBot.setStatus(BotStatus.OFFLINE);
+                        botEntityService.save(baseBot.getEntity());
+                    }
+                case OFFLINE:
+                    continue;
             }
+
         }
     }
 
@@ -54,6 +64,7 @@ public class BotManager {
         BaseBot bot = getBotWithException(robot_name);
         bot.setStatus(BotStatus.RUNNING);
         bot.saveTimeStamp();
+        botEntityService.save(bot.getEntity());
     }
 
     /**
@@ -162,7 +173,7 @@ public class BotManager {
     public BaseBot createBot(String bot_type) {
         BaseBot create_bot = null;
         // 给BOT 生成唯一的uuid, 成功
-        final Long uuid = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+        final Long uuid = UUID.randomUUID().getMostSignificantBits() & Integer.MAX_VALUE;
         if (bot_type.equals("wechat")) {
             create_bot = new WechatBot(uuid);
         } else if (bot_type.equals("qq")) {

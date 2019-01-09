@@ -23,9 +23,12 @@ public interface BotEntityService extends CrudRepository<BotEntity, Long> {
 
     Collection<BotEntity> findAll();
 
+
     @Override
     void deleteAll();
 
     @Override
     void deleteById(Long aLong);
+
+    Optional<BotEntity> findByIp(String ip);
 }

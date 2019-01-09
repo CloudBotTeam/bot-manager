@@ -1,8 +1,12 @@
 package cn.cloudbot.botmanager.controller;
 
+import cn.cloudbot.botmanager.dao.BotEntityService;
+import cn.cloudbot.botmanager.dao.GroupService;
+import cn.cloudbot.botmanager.dao.ServicerService;
 import cn.cloudbot.botmanager.domain.bot.BotManager;
 import cn.cloudbot.botmanager.domain.bot.BaseBot;
 import cn.cloudbot.botmanager.domain.bot.BotStatus;
+import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
 import cn.cloudbot.botmanager.domain.bot.group.Group;
 import cn.cloudbot.botmanager.domain.bot.group.Service;
 import cn.cloudbot.botmanager.exceptions.EnumValueException;
@@ -16,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @RestController
@@ -58,6 +63,18 @@ public class OuterController {
         return bot.getConnetionUrl();
     }
 
+    @PostMapping(path = "/robots/{bot_id}/groups")
+    private @ResponseBody Group addGroup(@PathVariable("bot_id") Long bot_id, @RequestBody Group group) {
+        BaseBot bot = botManagerInstance.getBotWithException(bot_id);
+        group.setBotId(bot.getBot_id());
+        groupService.save(group);
+
+        bot.addGroup(group);
+
+        botEntityService.save(bot.getEntity());
+        return group;
+    }
+
     @DeleteMapping(path = "/robots/{bot_id}")
     public ResponseEntity deleteBot(@PathVariable("bot_id") Long botName) {
         boolean exists = botManagerInstance.removeBot(botName);
@@ -73,6 +90,12 @@ public class OuterController {
         return new ResponseEntity(status);
     }
 
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private BotEntityService botEntityService;
+
     @PostMapping(path = "/robots")
     public ResponseEntity<BaseBot> createBot(@RequestBody BotData botData) {
         BaseBot bot = botManagerInstance.createBot(botData.getBot_type());
@@ -80,12 +103,18 @@ public class OuterController {
             for (Group group:
                     bot.getGroup_list()) {
                 // set bot_id for group id
-                group.setBot_id(bot.getBot_id());
+                group.setBotId(bot.getBot_id());
+
+                groupService.save(group);
                 bot.addGroup(group);
             }
+            botEntityService.save(bot.getEntity());
         }
+
         return new ResponseEntity<BaseBot>(bot, HttpStatus.CREATED);
     }
+
+
 
     @DeleteMapping(path = "/robots/deletegroups")
     public ResponseEntity deleteGroups(@RequestBody BatchGroupCommand deleteGroupCommand) {
@@ -94,6 +123,7 @@ public class OuterController {
              deleteGroupCommand.getDelete_groups()) {
             bot.removeGroup(group);
         }
+        botEntityService.save(bot.getEntity());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -104,7 +134,12 @@ public class OuterController {
         for (Group group:
              batchGroupCommand.getAdd_groups()) {
 
+            group.setBotId(bot.getBot_id());
+            groupService.save(group);
+
             bot.addGroup(group);
+
+
         }
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -131,6 +166,8 @@ public class OuterController {
 
     }
 
+    @Autowired
+    private ServicerService servicerService;
 
     @PostMapping(path = "/robots/{botName}/groups/{groupId}/services")
     private void addRobotGroupServices(@PathVariable("botName") Long botName,
@@ -138,7 +175,15 @@ public class OuterController {
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
-        group.getServ_list().addAll(servList.getServices());
+        Collection<Service> services = new ArrayList<>();
+        for (Service service:
+             servList.getServices()) {
+            String name = service.getServ();
+
+            services.add(servicerService.findServ(name));
+        }
+        group.getServ_list().addAll(services);
+        groupService.save(group);
     }
 
     @DeleteMapping(path = "/robots")
