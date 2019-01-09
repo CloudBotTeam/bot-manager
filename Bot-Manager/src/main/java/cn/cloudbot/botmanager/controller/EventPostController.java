@@ -27,6 +27,7 @@ interface MsgHandler {
     void handle_msg(final Object value);
 }
 
+@CrossOrigin
 @RestController
 public class EventPostController {
     @Autowired
