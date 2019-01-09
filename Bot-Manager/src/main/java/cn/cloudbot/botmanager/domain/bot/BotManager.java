@@ -219,6 +219,8 @@ public class BotManager {
      * @return
      */
     public BaseBot createBot(String bot_type) {
+        logger.info("want to create with type " + bot_type);
+        bot_type = bot_type.toLowerCase();
         BaseBot create_bot = null;
         // 给BOT 生成唯一的uuid, 成功
         final Long uuid = UUID.randomUUID().getMostSignificantBits() & Integer.MAX_VALUE;
@@ -266,7 +268,14 @@ public class BotManager {
     }
 
     private WechatBot createWechatBotWithBotEntity(BotEntity entity) {
-        throw new NotImplementedException("Un impl");
+        WechatBot wcBot = new WechatBot(entity.getUuid());
+        wcBot.setStatus(entity.getBotStatus());
+        wcBot.setBot_ip(entity.getIp());
+        wcBot.group_list = entity.getGroups();
+        wcBot.lastSavedTimeStamp = entity.getLastSaveTime();
+        wcBot.setRestTemplate(this.restTemplate);
+        wcBot.setEntity(entity);
+        return wcBot;
     }
 
     private BotManager() {}

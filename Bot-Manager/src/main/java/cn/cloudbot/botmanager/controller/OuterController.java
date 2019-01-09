@@ -100,6 +100,7 @@ public class OuterController {
 
     @PostMapping(path = "/robots")
     public ResponseEntity<BaseBot> createBot(@RequestBody BotData botData) {
+        logger.info("get create data " + botData);
         BaseBot bot = botManagerInstance.createBot(botData.getBot_type());
         if (bot.getGroup_list() != null) {
             for (Group group:
