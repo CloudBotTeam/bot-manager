@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-@CrossOrigin
 @RestController
 public class OuterController {
     @Autowired
