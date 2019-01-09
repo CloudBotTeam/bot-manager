@@ -5,6 +5,7 @@ import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
 import cn.cloudbot.common.Message.ServiceMessage.RobotRecvMessage;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
 import java.util.logging.Logger;
@@ -63,7 +64,9 @@ public class QQBot extends BaseBot {
     @Override
     public void BootServiceInContainer() {
         logger.info("启动容器 " + this.getBot_id());
-        BotContainer bootContainer = restTemplate.getForObject(this.DockerHTTPAPI + "/create", BotContainer.class);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(this.DockerHTTPAPI + "/create")
+                .queryParam("type", "qq");
+        BotContainer bootContainer = restTemplate.getForObject(builder.toUriString(), BotContainer.class);
         logger.info("获得BOOT CONTAINER " + bootContainer);
         this.setStatus(BotStatus.BOOTING);
         this.entity = BotEntity.fromBotContainer(bootContainer);
