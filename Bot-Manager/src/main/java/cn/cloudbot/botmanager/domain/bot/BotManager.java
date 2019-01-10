@@ -166,15 +166,31 @@ public class BotManager {
 
                 String serv_name = robotRecvMessage2.getFrom_service();
                 Service service = serviceDao.findServ(serv_name);
-                for ( Group group :groupService.findAllByServListContains(service)) {
-                    for (BotEntity bot:
-                         botEntityService.findAllByGroupsContains(group)) {
-                        RobotRecvMessage message = new RobotRecvMessage();
-                        message.setMessage(robotRecvMessage2.getMessage());
-                        message.setGroup_id(group.getGroup());
-                        message.setRoom_id(group.getGroup());
-                        BaseBot bot1 = createBotWithBotEntity(bot);
-                        bot1.asyncSendData(message);
+                logger.info("Service 找到了：" + service);
+                for ( Group group : groupService.findAll()) {
+                    if (!group.getServList().contains(service)) {
+                        continue;
+                    }
+                    logger.info("有 GROUP: " + group);
+                    RobotRecvMessage message = new RobotRecvMessage();
+                    message.setGroup_id(group.getGroup());
+                    for (BaseBot bot:
+                         this.listBot()) {
+                        logger.info("Bots: " + bot);
+                        for (Group group2:
+                             bot.group_list) {
+                            logger.info("比较的子GROUP 门"+ group2 + " " + group);
+                            if (group2.getGroup().equals(group.getGroup())) {
+                                logger.info("有 Bot: " + bot);
+
+                                message.setMessage(robotRecvMessage2.getMessage());
+
+                                message.setRoom_id(group.getGroup());
+
+                                bot.asyncSendData(message);
+                            }
+                        }
+
                     }
                 }
                 break;

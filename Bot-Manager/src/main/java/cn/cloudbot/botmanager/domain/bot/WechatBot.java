@@ -70,6 +70,7 @@ public class WechatBot extends BaseBot {
     public void asyncSendData(RobotRecvMessage resp) {
         logger.info(this.entity.getUuid() + " 发送请求" + resp);
         String target = "http://" + entity.getIp() + ":5700" + "/send_group_msg";
+
         logger.info("请求目标为： " + target);
         restTemplate.postForObject(target, resp, Object.class);
     }
@@ -81,7 +82,8 @@ public class WechatBot extends BaseBot {
             String target = "http://" + entity.getIp() + ":5700" + "/connectUrl";
             String connectUrl = restTemplate.getForObject(target , String.class);
             return connectUrl;
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
+            logger.info("Get runtime e");
             return "";
         }
 

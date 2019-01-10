@@ -27,4 +27,9 @@ public interface GroupService extends CrudRepository<Group, Long> {
     Iterable<Group> findAll();
 
     Iterable<Group> findAllByServListContains(Service group);
+
+    Iterable<Group> findAllByServListContaining(Service group);
+
+    @Override
+    void delete(Group entity);
 }

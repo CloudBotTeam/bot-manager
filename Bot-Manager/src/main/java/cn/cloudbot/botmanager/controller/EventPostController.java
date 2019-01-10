@@ -116,7 +116,7 @@ public class EventPostController {
 //             event.getData()) {
 //            builder.append(segment.toString());
 //        }
-        logger.info("send message: " + event.toString() + " with detail ");
+        logger.info("recv robot message: " + event.toString() + " with detail ");
 
         RobotSendMessage2 message2 = new RobotSendMessage2();
         message2.setRobotSendMessage(event);
@@ -128,7 +128,8 @@ public class EventPostController {
         }
 
         for (Group g: botEntityOptional.get().getGroups()) {
-            logger.info("compare " + g.getGroup() + " with " + event.getGroup_id());
+            logger.info("compare " + g.getGroup() + " with " + event.getGroup_id() + " delta is " +
+                    g.getGroup().equals(event.getGroup_id()));
             if(g.getGroup().equals(event.getGroup_id())) {
 
                 Collection<String> serv = new HashSet<>();

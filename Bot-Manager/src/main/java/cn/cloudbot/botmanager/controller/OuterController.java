@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 @RestController
@@ -125,7 +127,36 @@ public class OuterController {
              deleteGroupCommand.getDelete_groups()) {
             bot.removeGroup(group);
         }
-        botEntityService.save(bot.getEntity());
+        BotEntity botEntity = bot.getEntity();
+
+        // TODO: make clear why here not deleted
+//        botEntity.getDelete_groups().removeAll(deleteGroupCommand.getDelete_groups());
+        Set<Group> groups = new TreeSet<>();
+        Set<Group> del_groups = new TreeSet<>();
+        for (Group group:
+             botEntity.getGroups()) {
+            boolean ok = true;
+            for (Group del_g:
+                 deleteGroupCommand.getDelete_groups()) {
+                if (group.getGroup().equals(del_g.getGroup())) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                groups.add(group);
+            } else {
+                del_groups.add(group);
+            }
+        }
+        botEntity.setGroups(groups);
+        logger.info("After del: " + botEntity);
+        botEntityService.save(botEntity);
+        for (Group group:
+             del_groups) {
+            groupService.delete(group);
+        }
+
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

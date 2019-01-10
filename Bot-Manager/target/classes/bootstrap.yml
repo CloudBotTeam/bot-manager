@@ -1,0 +1,9 @@
+# Spring Cloud Config 配置信息
+spring:
+  application:
+    name: bot-manager
+  cloud:
+    config:
+      profile: prod
+      label: master
+      uri: http://config-server:7001/ # config-server地址
