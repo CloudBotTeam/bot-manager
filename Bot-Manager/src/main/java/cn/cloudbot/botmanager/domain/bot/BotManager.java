@@ -98,6 +98,7 @@ public class BotManager {
         if (!botEntity.isPresent()) {
             throw new RobotNotFound(bot_id.toString());
         }
+        logger.info("Got bot entity " + botEntity.get());
         return this.createBotWithBotEntity(botEntity.get());
     }
 
@@ -182,12 +183,13 @@ public class BotManager {
                             logger.info("比较的子GROUP 门"+ group2 + " " + group);
                             if (group2.getGroup().equals(group.getGroup())) {
                                 logger.info("有 Bot: " + bot);
-
                                 message.setMessage(robotRecvMessage2.getMessage());
-
                                 message.setRoom_id(group.getGroup());
-
-                                bot.asyncSendData(message);
+                                try {
+                                    bot.asyncSendData(message);
+                                } catch (RuntimeException e) {
+                                    logger.info("Bot " + bot + " send message error.");
+                                }
                             }
                         }
 
@@ -206,7 +208,12 @@ public class BotManager {
                 }
                 BotEntity botEntity = botEntityOptional.get();
                 BaseBot bot = createBotWithBotEntity(botEntity);
-                bot.asyncSendData(message);
+                try {
+                    bot.asyncSendData(message);
+                } catch (RuntimeException e) {
+                    logger.info("Return message " + message  + " to " + bot + " got exception.");
+                }
+
 
         }
     }
@@ -216,6 +223,7 @@ public class BotManager {
 
         for (BaseBot bot:
              listBot()) {
+
             bot.asyncSendData(robotRecvMessage);
         }
 

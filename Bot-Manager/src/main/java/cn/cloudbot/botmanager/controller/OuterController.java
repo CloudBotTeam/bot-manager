@@ -186,7 +186,9 @@ public class OuterController {
     @GetMapping(path = "/robots/{botName}/groups/{groupId}")
     private Group getRobotGroup(@PathVariable("botName") Long botName, @PathVariable("groupId") String groupId) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
-        return bot.getGroupByIdWithNotFound(groupId);
+        Group group = bot.getGroupByIdWithNotFound(groupId);
+        Group group_entity = groupService.findByGroup(group.getGroup()).get();
+        return group_entity;
     }
 
     @DeleteMapping(path = "/robots/{botName}/groups/{groupId}/services")
@@ -195,8 +197,9 @@ public class OuterController {
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
-        group.getServList().removeAll(servList.getServices());
-        groupService.save(group);
+        Group group_entity = groupService.findByGroup(group.getGroup()).get();
+        group_entity.getServList().removeAll(servList.getServices());
+        groupService.save(group_entity);
     }
 
     @Autowired
@@ -211,6 +214,7 @@ public class OuterController {
                                           @RequestBody ServList servList) {
         BaseBot bot = botManagerInstance.getBotWithException(botName);
         Group group = bot.getGroupByIdWithNotFound(groupId);
+        Group group_entity = groupService.findByGroup(group.getGroup()).get();
         Collection<Service> services = new ArrayList<>();
 
         for (Service service:
@@ -219,8 +223,8 @@ public class OuterController {
             logger.info("ServName " + name + " want to add in our service");
             services.add(servicerService.findServ(name));
         }
-        group.getServList().addAll(services);
-        groupService.save(group);
+        group_entity.getServList().addAll(services);
+        groupService.save(group_entity);
         return group;
     }
 

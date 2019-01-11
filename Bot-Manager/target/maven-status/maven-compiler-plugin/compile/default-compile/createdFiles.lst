@@ -21,6 +21,7 @@ cn/cloudbot/botmanager/domain/bot/group/Service.class
 cn/cloudbot/botmanager/receiver/MessageReceiver.class
 cn/cloudbot/botmanager/controller/OuterController.class
 cn/cloudbot/botmanager/domain/message/recv_event/meta_event/Status.class
+cn/cloudbot/botmanager/service/RequestSender.class
 cn/cloudbot/botmanager/domain/message/post_event/StringRespMessage.class
 cn/cloudbot/botmanager/receiver2/ReceiverImpl2/ReceiverImpl2.class
 cn/cloudbot/botmanager/domain/message/recv_event/event/MessageData.class

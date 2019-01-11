@@ -1,12 +1,14 @@
 package cn.cloudbot.botmanager.domain.bot;
 
 
+import cn.cloudbot.botmanager.dao.GroupService;
 import cn.cloudbot.botmanager.domain.bot.group.BotEntity;
 import cn.cloudbot.botmanager.domain.bot.group.Group;
 
 import cn.cloudbot.botmanager.exceptions.GroupNotFound;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.ogm.annotation.Transient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
@@ -28,6 +30,8 @@ public abstract class BaseBot implements BotInterface {
         }
         throw new GroupNotFound(group_id.toString());
     }
+
+
 
     protected BotEntity entity;
     public BotEntity getEntity() {

@@ -17,6 +17,7 @@
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/BotManager.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/receiver/MessageReceiver.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/message/recv_event/event/MessageSegment.java
+/Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/service/RequestSender.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/dao/GroupService.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/domain/bot/group/Service.java
 /Users/fuasahi/CloudBotTeam/bot_manager/Bot-Manager/src/main/java/cn/cloudbot/botmanager/receiver/BotMessageSender.java
